@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+<meta charset="UTF-8">
+<title>脱初心者のためのPython&Math</title>
+<meta name="description" content="サイトの説明文">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- OGP設定 -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="あなたのサイトURL" />
+<meta property="og:image" content="SNSで表示させたい画像のパス" />
+<meta property="og:title" content="ページタイトル" />
+<meta property="og:description" content="サイトの説明文" />
+<!-- Facebook用設定 -->
+<meta property="fb:app_id" content="facebookのApp ID" />
+<meta property="article:publisher" content="FacebookページのURL">
+<!-- Twitter用設定 -->
+<meta name="twitter:card" content="Twitterカードの種類">
+<meta name="twitter:site" content="@ユーザー名">
+<link rel="canonical" href="あなたのサイトURL">
+<!--<link rel="icon" type="image/png" href="ファビコンのパス">-->
+<!-- スタイルシートはここから -->	
+<link rel="stylesheet" href="../css/bootstrap.min.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/queries.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">    
+</head>
+<!------------------------------------------------------------------------------------------------------------------>
+<header>
+<nav class="navbar navbar-expand-md navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="../contact/game.html"><img src="../img/logo.png" alt="あなたのサイト名"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span> </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+            <ul class="navbar-nav">
+                <li class="nav-item active"><a href="" class="nav-link"></a></li>
+                <li class="nav-item"><a href="#sec2" class="nav-link">none</a></li>
+                <li class="nav-item"><a href="#sec3" class="nav-link">none</a></li>
+                <li class="nav-item"><a href="#sec4" class="nav-link">none</a></li>
+                <li class="nav-item"><a href="#sec5" class="nav-link">none</a></li>
+            </ul>
+        </div>
+     </div>    
+</nav>
+<nav aria-label="breadcrumb" id="breadcrumb-wrapper">
+	<ol class="breadcrumb rounded-0 m-0">
+        <li class="breadcrumb-item"><a href="../index.html">ホーム</a></li>
+        <li class="breadcrumb-item"><a href="../contact/python.html">python</a></li>
+		<li class="breadcrumb-item active" aria-current="page">分類</li>
+	</ol>
+</nav>
+</header>
+<body style = "background-color: #401f0f;">
+    <div class = main>
+        <h1>Tensorflowによる画像分類</h1>
+        <p>2020/07/06</p>
+        <h2>環境設定</h2>
+        <h3>---------------------------------------</h3>
+        <p>OS windows 10</p>
+        <p>python version 3.7.4</p>
+        <p>library　matplotlib3.2.1, opencv-python 4.2.0.34, numpy 1.18.5, scikit-learn0.22.2.post1, tensorflow 2.0</p>
+        <h2>自作データセット作成方法</h2>
+        <h3>---------------------------------------</h3>
+        <p><h4>1.</h4>datasetフォルダを作成(例 dataset)</p>
+        <p><h4>2.</h4>datasetの中に二種類のフォルダを作成(例 dataset/category1,2)</p>
+        <p><h4>3.</h4>二種類のフォルダに分類したい二種類の画像を保存(例 dataset/category1,2/n.jpg)</p>
+        <p>フォルダ構成</p>
+        <h4><span class ="data">dataset</span></h4>
+        <P>┃-category1</P>
+        <P><span class="c">┣---------n.jpg</span></P>
+        <P><span class="c">┣---------n.jpg</span></P>
+        <p>┃-category2</p>
+        <P><span class="c">┣---------n.jpg</span></P>
+        <P><span class="c">┣---------n.jpg</span></P>
+        <style>
+            span.c{
+                margin-left : 50px;
+            }
+            span.data{
+                margin-right : 20px;
+            }
+        </style>
+
+
+        <h2>ライブラリのインストール</h2>
+        <h3>---------------------------------------</h3>
+        <div class= "import" style="line-height: 0.6em">
+            <p># coding: utf-8</p>
+            <p>import matplotlib.pyplot as plt</p>
+            <p>import os</p>
+            <p>import cv2</p>
+            <p>import random</p>
+            <p>import numpy as np</p>
+            <p>from sklearn.model_selection import train_test_split</p>
+            <p>import tensorflow as tf</p>
+            <p>from tensorflow import keras</p>
+        </div>
+        <style>
+            div.import{
+            text-align: left;
+            width: 800px;
+            height: 220px;
+            background: black;
+            margin: auto;
+            border-color:grey;
+            border-width: 1px;
+            border-style: solid;
+            color: green;
+            }
+        </style>
+        <h2>自作データセットの読み込み</h2>
+        <h3>---------------------------------------</h3>
+        <div class= "read" style="line-height: 0.6em">
+            <p>DATADIR = "dataset dir"</p>
+            <p>CATEGORIES = ["category1", "category2"]</p>
+            <p>IMG_SIZE = 50</p>
+            <p>training_data = []</p>
+            <p>def create_training_data():</p>
+            <p><span class ="line1">for class_num, category in enumerate(CATEGORIES):</span> </p>
+            <p><span class ="line2">path = os.path.join(DATADIR, category)</span> </p>
+            <p><span class ="line3"></span>for image_name in os.listdir(path):</span></p>
+            <p><span class ="line4">try:</span></p>
+            <p><span class ="line5">img_array = cv2.imread(os.path.join(path, image_name),)  # 画像読み込み</span></p>
+            <p><span class ="line6">img_resize_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))  # 画像のリサイズ</span></p>
+            <p><span class ="line7">training_data.append([img_resize_array, class_num])  # 画像データ、ラベル情報を追加</span></p>
+            <p><span class ="line8">except Exception as e:</span></p>
+            <p><span class ="line9">pass</span></p>
+        </div>
+        <style>
+            div.read{
+            text-align: left;
+            width: 800px;
+            height: 350px;
+            background: black;
+            margin: auto;
+            border-color:grey;
+            border-width: 1px;
+            border-style: solid;
+            color: green;
+            }
+            span.line1{
+                margin-left : 27px;
+            }
+            span.line2{
+                margin-left : 50px;
+            }
+            span.line3{
+                margin-left : 50px;
+            }
+            span.line4{
+                margin-left : 73px;
+            }
+            span.line5{
+                margin-left : 93px;
+            }
+            span.line6{
+                margin-left : 93px;
+            }
+            span.line7{
+                margin-left : 93px;
+            }
+            span.line8{
+                margin-left : 73px;
+            }
+            span.line9{
+                margin-left : 103px;
+            }
+        </style>
+         <p>DATADIR：自作データセットフォルダを選択</p>
+         <p>CATEGORIES：二種類のフォルダを選択</p>
+         <p>training_data:読み込んだ画像を格納する箱</p>
+         <p>def create_training_data: フォルダ内の画像を読み込むための関数</p>
+         <div class= "train" style="line-height: 0.6em">
+            <p>create_training_data()</p>
+            <p>random.shuffle(training_data) # データをシャッフル </p>
+            <p>X_train = []  # 画像データ</p>
+            <p>y_train = []  # ラベル情報</p>
+            <p>X_test =[] #テストデータ</p>
+            <p>y_test =[] #テストラベル情報</p>
+            <p>X_val = []#検証データ</p>
+            <p>y_val = []#検証ラベル情報</p>
+            <p>for feature, label in training_data:</p>
+            <P><span class ="train">X_train.append(feature)</span></P>
+            <p><span class ="train">y_train.append(label)</span></p>
+        </div>
+        <style>
+            div.train{
+            text-align: left;
+            width: 800px;
+            height: 280px;
+            background: black;
+            margin: auto;
+            border-color:grey;
+            border-width: 1px;
+            border-style: solid;
+            color: green;
+            }
+            span.train{
+                margin-left : 25px;
+            }
+        </style>
+        <P>create_training_dataで関数を実行</P>
+        <p>train,test,valの格納場所を事前に制作</p>
+        <P>for feature, label in training_data:で画像データとラベルを別々に格納</P>
+        <div class= "cut" style="line-height: 0.6em">
+            <p>X_train,X_test = train_test_split(X_train, test_size=0.25,shuffle = False) </p>
+            <p>y_train,y_test = train_test_split(y_train, test_size=0.25,shuffle = False)</p>
+            <p>X_train,X_val = train_test_split(X_train, test_size=0.5,shuffle = False)</p>
+            <p>y_train,y_val  = train_test_split(y_train, test_size=0.5,shuffle = False)</p>
+        </div>
+        <P>X_train,y_trainを事前に作成しておいた2箱に25%ずつ格納</P>
+        <P>shuffle=Falseなのはラベルと画像を別々にシャッフルしてしまうため</P>
+        <div class= "num" style="line-height: 0.6em">
+            <p>X_train = np.array(X_train)</p>
+            <p>y_train = np.array(y_train)</p>
+            <p>X_test = np.array(X_test)</p>
+            <p>y_test = np.array(y_test)</p>
+            <p>X_val = np.array(X_val)</p>
+            <p>y_val = np.array(y_val)</p>
+        </div>
+        <style>
+            div.num{
+            text-align: left;
+            width: 800px;
+            height: 150px;
+            background: black;
+            margin: auto;
+            border-color:grey;
+            border-width: 1px;
+            border-style: solid;
+            color: green;
+            }
+        </style>
+        <style>
+            div.cut{
+            text-align: left;
+            width: 800px;
+            height: 100px;
+            background: black;
+            margin: auto;
+            border-color:grey;
+            border-width: 1px;
+            border-style: solid;
+            color: green;
+            }
+        </style>
+        <p>それぞれの箱をNumpy配列化</p>
+        <h2>ディープラーニング</h2>
+        <h3>---------------------------------------</h3>
+        <div class= "layer" style="line-height: 0.6em">
+            <p>X_train, X_test, X_val = X_train / 255.0, X_test / 255.0, X_val/255.0</p>
+            <p>model = tf.keras.models.Sequential([</p>
+            <p><span class = "layer">tf.keras.layers.Flatten(input_shape=(50,50,3)),</span></p>
+            <p><span class = "layer">tf.keras.layers.Dense(128, activation='relu'),</span></p>
+            <p><span class = "layer">tf.keras.layers.Dropout(0.2),</span></p>
+            <p><span class = "layer">tf.keras.layers.Dense(2, activation='softmax')</span></p>
+            <P>])</P>
+            <p>model.compile(optimizer='adam',</p>
+            <P><span class = "model1">loss='sparse_categorical_crossentropy',</span></P>
+            <p><span class = "model1">metrics=['accuracy'])</span></p>
+            <p>history = model.fit(X_train,</p>
+            <p><span class = "model2">y_train,</span></p>
+            <p><span class = "model2">epochs=15,</span></p>
+            <p><span class = "model2">validation_data = (X_val,y_val),</span></p>
+            <p><span class = "model2"> )</span></p>
+        </div>
+        <style>
+            div.layer{
+            text-align: left;
+            width: 800px;
+            height: 370px;
+            background: black;
+            margin: auto;
+            border-color:grey;
+            border-width: 1px;
+            border-style: solid;
+            color: green;
+            }
+            span.layer{
+                margin-left : 23px;
+            }
+            span.model1{
+                margin-left : 110px;
+            }
+            span.model2{
+                margin-left : 136px;
+            }
+        </style>
+        <P>X_train, X_test, X_val = X_train / 255.0, X_test / 255.0, X_val/255.0で二値化</P>
+        <P>ちなみに二値化しないと精度が少し安定しなくなる</P>
+        <P>model = ..で層を構成、今回は、tensorflow公式サイトチュートリアルそのまま</P>
+        <p>Tensorflow公式サイトURL↓</p>
+        <a href ="https://www.tensorflow.org/tutorials/quickstart/beginner?hl=ja">https://www.tensorflow.org/tutorials/quickstart/beginner?hl=ja</a>
+        <div class= "ev" style="line-height: 0.6em">
+            <p>result = model.evaluate(X_test,  y_test, verbose=2)</p>
+            <p>model.save('保存場所')</p>
+            <p>predictions = model.predict(X_test)</p>
+            <p>history_dict = history.history</p>
+            <P>acc = history_dict['accuracy']</P>
+            <p>val_acc = history_dict['val_accuracy']</p>
+            <P>loss = history_dict['loss']</P>
+            <p>val_loss = history_dict['val_loss']</p>
+            <p>epochs = range(1, len(acc) + 1)</p>
+        </div>
+        <style>
+            div.ev{
+            text-align: left;
+            width: 800px;
+            height: 223px;
+            background: black;
+            margin: auto;
+            border-color:grey;
+            border-width: 1px;
+            border-style: solid;
+            color: green;
+            }
+        </style>
+        <p>model.ecaluateで結果を算出</p>
+        <p>model.saveで重みを任意の場所に保存</p>
+        <p>model.predictで学習したネットワークを使用して分類</p>
+        <p>先ほど、model.fitを入れたhistoryを.historyで正答率と失敗率に分解</p>
+        <p>それぞれの要素を変数に格納</p>
+        <p>グラフ表示に使うためにrange(1, len(acc) + 1)でx座標を入手</p>
+        <h2>グラフ描画</h2>
+        <h3>---------------------------------------</h3>
+        <div class= "plot" style="line-height: 0.6em">
+            <p>plt.plot(epochs, loss, 'bo', label='Training loss')</p>
+            <p>plt.plot(epochs, val_loss, 'b', label='Validation loss')</p>
+            <p>plt.title('Training and validation loss')</p>
+            <p>plt.xlabel('Epochs')</p>
+            <P>plt.ylabel('Loss')</P>
+            <p>plt.legend()</p>
+            <P>plt.show()</P>
+            <p>plt.clf()</p>
+            <p></p>
+            <p>plt.plot(epochs, acc, 'bo', label='Training acc')</p>
+            <p>plt.plot(epochs, val_acc, 'b', label='Validation acc')</p>
+            <p>plt.title('Training and validation accuracy')</p>
+            <p>plt.xlabel('Epochs')</p>
+            <p>plt.ylabel('Accuracy')</p>
+            <P>plt.legend()</P>
+            <p>plt.show()</p>
+            <p></p>
+            <p>input()</p>
+        </div>
+        <style>
+            div.plot{
+            text-align: left;
+            width: 800px;
+            height: 400px;
+            background: black;
+            margin: auto;
+            border-color:grey;
+            border-width: 1px;
+            border-style: solid;
+            color: green;
+            }
+        </style>
+        <p>matplotを使用して二回グラフ描画</p>
+        <p>最後にとりあえずプログラムの終了を防ぐためにinput()</p>
+        <h3>備考</h3>
+        <p>活性化関数を変更してどれだけ正答率が変化するかを調べてみるのも面白そうです。</p>
+        <p>他にも層を深くしたり二種類の分類じゃなくて多種類の分類にしてみたり少しいじれば変更できるのでぜひ試してみてください。</p>
+    </div>
+    <style>
+        div.main{
+        text-align: left;
+        width: 1000px;
+        height: 4400px;
+        background: #FFFFFF;
+        margin: auto;
+        }
+        h1{
+            color: black
+        }
+        h4{
+            display: inline;
+        }
+    </style>
+</body>
