@@ -105,7 +105,6 @@ h1{
     height: 640px;
     background-color: #f1efff;
     border-bottom: #dddddd;
-    background: url("../img/top-main.jpg") no-repeat center center;
     background-size:cover;
 }
 #page-top .jumbotron-fluid .container{
@@ -126,6 +125,7 @@ h1{
     background-color: #fbfbf2;
 	padding: 5rem 0;
 }
+
 #page-top section:nth-child(odd){
     background-color: #e0c7b2;
 }
@@ -235,12 +235,7 @@ h1.page-ttl {
     line-height: 110%;
     margin-top: 0.2rem;
 }
-#page .jumbotron{
-    background-color: #f1efff;
-    border-bottom: #dddddd;
-    background: url("../img/top-main.jpg") no-repeat center center;
-    background-size:cover;
-    border-radius: initial;
+
 }
 #page .jumbotron .container{
     padding: 0;
